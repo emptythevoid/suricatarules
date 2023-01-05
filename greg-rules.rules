@@ -28,7 +28,7 @@ drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client 
 
 drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Transmission/1.x)"; flow:established,to_server; http.user_agent; content:"Transmission/"; depth:13; reference:url,www.transmissionbt.com; reference:url,doc.emergingthreats.net/2011699; classtype:policy-violation; sid:2011699; rev:7; metadata:created_at 2010_07_30, former_category P2P, updated_at 2020_08_18;)
 
-drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Transmission/3.0)"; flow:established,to_server; http.user_agent; content:"Transmission/"; depth:13; reference:url,www.transmissionbt.com; reference:url,doc.emergingthreats.net/2011699; classtype:policy-violation; sid:2011699; rev:7; metadata:created_at 2023_01_04, former_category P2P, updated_at 2023_01_04;)
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Transmission/3.0)"; flow:established,to_server; http.user_agent; content:"Transmission/"; depth:13; reference:url,www.transmissionbt.com; reference:url,doc.emergingthreats.net/2011699; classtype:policy-violation; sid:1; rev:7; metadata:created_at 2023_01_04, former_category P2P, updated_at 2023_01_04;)
 
 drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Deluge 1.x.x)"; flow:to_server,established; http.user_agent; content:"Deluge"; depth:6; reference:url,deluge-torrent.org; reference:url,doc.emergingthreats.net/2011704; classtype:policy-violation; sid:2011704; rev:7; metadata:created_at 2010_07_30, updated_at 2020_08_18;)
 

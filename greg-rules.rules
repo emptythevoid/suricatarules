@@ -1,0 +1,52 @@
+drop udp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent DHT ping request"; content:"d1|3a|ad2|3a|id20|3a|"; depth:12; nocase; threshold: type both, count 1, seconds 300, track by_src; reference:url,wiki.theory.org/BitTorrentDraftDHTProtocol; reference:url,doc.emergingthreats.net/bin/view/Main/2008581; classtype:policy-violation; sid:2008581; rev:3; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop udp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent DHT announce_peers request"; content:"d1|3a|ad2|3a|id20|3a|"; nocase; depth:14; content:"e1|3a|q13|3a|announce_peer1|3a|"; nocase; distance:55; threshold: type both, count 1, seconds 300, track by_src; reference:url,wiki.theory.org/BitTorrentDraftDHTProtocol; reference:url,doc.emergingthreats.net/bin/view/Main/2008585; classtype:policy-violation; sid:2008585; rev:4; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop udp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent DHT nodes reply"; content:"d1|3a|rd2|3a|id20|3a|"; nocase; depth:12; content:"5|3a|nodes"; nocase; distance:20; within:7; threshold: type both, count 1, seconds 300, track by_src; reference:url,wiki.theory.org/BitTorrentDraftDHTProtocol; reference:url,doc.emergingthreats.net/bin/view/Main/2008583; classtype:policy-violation; sid:2008583; rev:4; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop udp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent DHT get_peers request"; content:"d1|3a|ad2|3a|id20|3a|"; nocase; offset:12; content:"9|3a|info_hash20|3a|"; nocase; distance:20; within:14; content:"e1|3a|q9|3a|get_peers1|3a|"; nocase; distance:20; threshold: type both, count 1, seconds 300, track by_src; reference:url,wiki.theory.org/BitTorrentDraftDHTProtocol; reference:url,doc.emergingthreats.net/bin/view/Main/2008584; classtype:policy-violation; sid:2008584; rev:5; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop udp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent DHT find_node request"; content:"d1|3a|ad2|3a|id20|3a|"; nocase; depth:24; content:"6|3a|target20|3a|"; nocase; distance:20; content:"e1|3a|q9|3a|find_node1|3a|"; nocase; distance:20; content:"e1|3a|q9|3a|find_node1|3a|"; distance:20; nocase; threshold: type both, count 1, seconds 300, track by_src; reference:url,wiki.theory.org/BitTorrentDraftDHTProtocol; reference:url,doc.emergingthreats.net/bin/view/Main/2008582; classtype:policy-violation; sid:2008582; rev:7; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop http $EXTERNAL_NET any -> $HOME_NET any (msg:"ET P2P Ocelot BitTorrent Server in Use"; flow:established,from_server; content:"HTTP/1.1 200 |0d 0a|Server|3a| Ocelot "; depth:30; classtype:policy-violation; sid:2012467; rev:2; metadata:created_at 2011_03_10, updated_at 2011_03_10;)
+
+drop tcp $HOME_NET any -> $EXTERNAL_NET 6881:6889 (msg:"GPL P2P BitTorrent transfer"; flow:to_server,established; content:"|13|BitTorrent protocol"; depth:20; classtype:policy-violation; sid:2102181; rev:3; metadata:created_at 2010_09_23, updated_at 2010_09_23;)
+
+drop tcp $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P BitTorrent Traffic"; flow: established; content:"|0000400907000000|"; depth:8; threshold: type limit, count 1, seconds 120, track by_src; reference:url,bitconjurer.org/BitTorrent/protocol.html; reference:url,doc.emergingthreats.net/bin/view/Main/2000357; classtype:policy-violation; sid:2000357; rev:9; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop tcp $HOME_NET any -> $EXTERNAL_NET !7680 (msg:"ET P2P BitTorrent peer sync"; flow:established; content:"|00 00 00 0d 06 00|"; depth:6; threshold: type limit, track by_dst, seconds 300, count 1; reference:url,bitconjurer.org/BitTorrent/protocol.html; reference:url,doc.emergingthreats.net/bin/view/Main/2000334; classtype:policy-violation; sid:2000334; rev:13; metadata:created_at 2010_07_30, updated_at 2010_07_30;)
+
+drop http $EXTERNAL_NET any -> $HOME_NET any (msg:"ET P2P BitTorrent - Torrent File Downloaded"; flow:established,to_client; file_data; content:"d8|3a|announce"; within:11; content:!"mapfactor.com"; classtype:policy-violation; sid:2014734; rev:5; metadata:created_at 2012_05_11, updated_at 2012_05_11;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"GPL P2P BitTorrent announce request"; flow:to_server,established; http.method; content:"GET"; http.uri; content:"/announce"; content:"info_hash="; content:"event=started"; classtype:policy-violation; sid:2102180; rev:7; metadata:created_at 2010_09_23, updated_at 2020_04_21;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Enhanced CTorrent 3.x)"; flow:to_server,established; http.user_agent; content:"Enhanced-CTorrent"; reference:url,www.rahul.net/dholmes/ctorrent; reference:url,doc.emergingthreats.net/2011703; classtype:policy-violation; sid:2011703; rev:7; metadata:created_at 2010_07_30, updated_at 2020_04_23;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Opera/10.x)"; flow:to_server,established; http.user_agent; content:"Opera BitTorrent, Opera/"; reference:url,www.opera.com; reference:url,doc.emergingthreats.net/2011701; classtype:policy-violation; sid:2011701; rev:7; metadata:created_at 2010_07_30, updated_at 2020_04_23;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (uTorrent)"; flow:to_server,established; http.header; content:"User-Agent|3a 20|uTorrent"; reference:url,www.utorrent.com; reference:url,doc.emergingthreats.net/2011706; classtype:policy-violation; sid:2011706; rev:7; metadata:created_at 2010_07_30, updated_at 2022_05_03;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Transmission/1.x)"; flow:established,to_server; http.user_agent; content:"Transmission/"; depth:13; reference:url,www.transmissionbt.com; reference:url,doc.emergingthreats.net/2011699; classtype:policy-violation; sid:2011699; rev:7; metadata:created_at 2010_07_30, former_category P2P, updated_at 2020_08_18;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Deluge 1.x.x)"; flow:to_server,established; http.user_agent; content:"Deluge"; depth:6; reference:url,deluge-torrent.org; reference:url,doc.emergingthreats.net/2011704; classtype:policy-violation; sid:2011704; rev:7; metadata:created_at 2010_07_30, updated_at 2020_08_18;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (FDM 3.x)"; flow:to_server,established; http.user_agent; content:"FDM 3."; depth:6; reference:url,www.freedownloadmanager.org; reference:url,doc.emergingthreats.net/2011712; classtype:policy-violation; sid:2011712; rev:8; metadata:created_at 2010_07_30, updated_at 2020_09_13;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (rTorrent)"; flow:to_server,established; http.user_agent; content:"rtorrent/"; depth:9; reference:url,libtorrent.rakshasa.no; reference:url,doc.emergingthreats.net/2011705; classtype:policy-violation; sid:2011705; rev:7; metadata:created_at 2010_07_30, updated_at 2020_09_14;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client HTTP Request"; flow:to_server,established; http.uri; content:"/trackerphp/announce.php?"; nocase; content:"?port="; nocase; content:"&peer_id="; reference:url,doc.emergingthreats.net/bin/view/Main/2006375; classtype:trojan-activity; sid:2006375; rev:8; metadata:created_at 2010_07_30, former_category P2P, updated_at 2020_09_14;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (BTSP)"; flow:to_server,established; http.user_agent; content:"BTSP/"; depth:5; reference:url,doc.emergingthreats.net/2011713; classtype:policy-violation; sid:2011713; rev:7; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (BitComet)"; flow:to_server,established; http.user_agent; content:"BitComet/"; depth:9; reference:url,www.bitcomet.com; reference:url,doc.emergingthreats.net/2011710; classtype:policy-violation; sid:2011710; rev:7; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (BitTornado)"; flow:to_server,established; http.user_agent; content:"BitTornado/"; depth:11; reference:url,www.bittornado.com; reference:url,doc.emergingthreats.net/2011702; classtype:policy-violation; sid:2011702; rev:7; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (Bittorrent/5.x.x)"; flow:to_server,established; http.user_agent; content:"Bittorrent"; depth:10; reference:url,doc.emergingthreats.net/bin/view/Main/2006372; classtype:trojan-activity; sid:2006372; rev:10; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (KTorrent/3.x.x)"; flow:to_server,established; http.user_agent; content:"KTorrent/3"; depth:10; reference:url,ktorrent.org; reference:url,doc.emergingthreats.net/2011700; classtype:policy-violation; sid:2011700; rev:7; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+#drop http $HOME_NET any -> $EXTERNAL_NET any (msg:"ET P2P Bittorrent P2P Client User-Agent (KTorrent 2.x)"; flow:to_server,established; http.user_agent; content:"ktorrent/2"; depth:10; reference:url,ktorrent.org; reference:url,doc.emergingthreats.net/2011711; classtype:policy-violation; sid:2011711; rev:7; metadata:created_at 2010_07_30, updated_at 2020_10_19;)
+
+
+
